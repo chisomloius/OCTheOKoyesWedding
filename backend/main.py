@@ -1,211 +1,219 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime
-import os
-from dotenv import load_dotenv
+import logging
 
-load_dotenv()
+from config import config, engine, get_db, Base
+from models import RSVP, GiftRegistry, WeddingEvent
+from schemas import (
+    RSVPCreate, RSVPResponse, RSVPList,
+    GiftRegistryCreate, GiftRegistryUpdate, GiftRegistryResponse, GiftRegistryList,
+    WeddingEventCreate, WeddingEventResponse, WeddingEventList,
+    HealthResponse
+)
+
+# Create tables
+Base.metadata.create_all(bind=engine)
+
+# Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize FastAPI
 app = FastAPI(
     title="Wedding Website API",
-    description="API for Chisom & Onyinye's wedding",
+    description="API for Chisom & Onyinye's wedding - #OCtheOkoyes26",
     version="1.0.0"
 )
 
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all for development
+    allow_origins=[config.FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ===================================
-# MODELS
+# HEALTH CHECK ENDPOINTS
 # ===================================
 
-class RSVPRequest(BaseModel):
-    name: str
-    email: EmailStr
-    phone: str
-    attendance: str  # yes, maybe, no
-    guests: str
-    message: str = ""
-
-class RegistryItem(BaseModel):
-    id: int
-    name: str
-    category: str
-    icon: str
-
-# ===================================
-# GOOGLE SHEETS INTEGRATION (Simple Version)
-# ===================================
-
-def log_rsvp_to_sheet(rsvp_data: dict):
-    """
-    Log RSVP data to Google Sheets
-    For now, we'll just print it. You can integrate with Google Sheets API later.
-    """
-    try:
-        # TODO: Integrate with Google Sheets API
-        # For testing, just print the data
-        print(f"\n{'='*50}")
-        print("RSVP RECEIVED:")
-        print(f"Name: {rsvp_data['name']}")
-        print(f"Email: {rsvp_data['email']}")
-        print(f"Phone: {rsvp_data['phone']}")
-        print(f"Attendance: {rsvp_data['attendance']}")
-        print(f"Guests: {rsvp_data['guests']}")
-        print(f"Message: {rsvp_data['message']}")
-        print(f"Submitted: {datetime.now().isoformat()}")
-        print(f"{'='*50}\n")
-        return True
-    except Exception as e:
-        print(f"Error logging RSVP: {str(e)}")
-        return False
-
-# ===================================
-# ENDPOINTS
-# ===================================
-
-@app.get("/")
+@app.get("/", response_model=dict)
 async def root():
     """Welcome endpoint"""
     return {
-        "message": "Wedding Website API",
+        "message": "Wedding Website API - #OCtheOkoyes26",
+        "version": "1.0.0",
         "endpoints": {
             "docs": "/docs",
             "health": "/health",
-            "rsvp": "/api/rsvp",
-            "registry": "/api/registry"
+            "rsvp": {
+                "create": "POST /api/rsvp",
+                "list": "GET /api/rsvp",
+                "detail": "GET /api/rsvp/{id}"
+            },
+            "registry": {
+                "list": "GET /api/registry",
+                "update": "PATCH /api/registry/{id}"
+            },
+            "events": {
+                "list": "GET /api/events"
+            }
         }
     }
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "ok", "message": "Server is running"}
-
-# ===================================
-# RSVP ENDPOINT
-# ===================================
-
-@app.post("/api/rsvp")
-async def submit_rsvp(rsvp: RSVPRequest):
-    """
-    Submit RSVP information
-    
-    Validates guest information and logs to Google Sheets
-    """
+@app.get("/health", response_model=HealthResponse)
+async def health_check(db: Session = Depends(get_db)):
+    """Health check endpoint with database connection test"""
     try:
-        # Validate required fields
-        if not rsvp.name.strip():
-            raise HTTPException(status_code=400, detail="Name is required")
-        if not rsvp.email:
-            raise HTTPException(status_code=400, detail="Email is required")
-        if not rsvp.phone.strip():
-            raise HTTPException(status_code=400, detail="Phone is required")
-        if not rsvp.attendance:
-            raise HTTPException(status_code=400, detail="Attendance status is required")
-
-        # Prepare RSVP data
-        rsvp_data = {
-            "name": rsvp.name.strip(),
-            "email": rsvp.email,
-            "phone": rsvp.phone.strip(),
-            "attendance": rsvp.attendance,
-            "guests": rsvp.guests,
-            "message": rsvp.message.strip() if rsvp.message else "",
-            "timestamp": datetime.now().isoformat()
-        }
-
-        # Log to Google Sheets (or console for now)
-        log_rsvp_to_sheet(rsvp_data)
-
-        return {
-            "success": True,
-            "message": "RSVP submitted successfully!",
-            "data": {
-                "name": rsvp_data["name"],
-                "email": rsvp_data["email"],
-                "timestamp": rsvp_data["timestamp"]
-            }
-        }
-
-    except HTTPException as e:
-        raise e
+        # Test database connection
+        db.execute("SELECT 1")
+        db_status = "connected"
     except Exception as e:
-        print(f"Error processing RSVP: {str(e)}")
+        logger.error(f"Database connection failed: {str(e)}")
+        db_status = "disconnected"
+        raise HTTPException(status_code=500, detail="Database connection failed")
+    
+    return HealthResponse(
+        status="ok",
+        message="Server is running and healthy",
+        database=db_status
+    )
+
+# ===================================
+# RSVP ENDPOINTS
+# ===================================
+
+@app.post("/api/rsvp", response_model=RSVPResponse, status_code=status.HTTP_201_CREATED)
+async def create_rsvp(rsvp: RSVPCreate, db: Session = Depends(get_db)):
+    """Submit RSVP - saves to PostgreSQL database"""
+    try:
+        # Check if email already exists
+        existing = db.query(RSVP).filter(RSVP.email == rsvp.email).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This email has already submitted an RSVP"
+            )
+        
+        # Create new RSVP
+        db_rsvp = RSVP(
+            name=rsvp.name,
+            email=rsvp.email,
+            phone=rsvp.phone,
+            attendance=rsvp.attendance,
+            guests=rsvp.guests,
+            message=rsvp.message
+        )
+        
+        db.add(db_rsvp)
+        db.commit()
+        db.refresh(db_rsvp)
+        
+        logger.info(f"RSVP received from {rsvp.name} ({rsvp.email})")
+        
+        return db_rsvp
+        
+    except IntegrityError as e:
+        db.rollback()
+        logger.error(f"Database integrity error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error saving RSVP")
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error creating RSVP: {str(e)}")
         raise HTTPException(status_code=500, detail="Error processing RSVP")
 
-# ===================================
-# REGISTRY ENDPOINT
-# ===================================
-
-@app.get("/api/registry")
-async def get_registry():
-    """
-    Get wedding gift registry items
-    """
+@app.get("/api/rsvp", response_model=RSVPList)
+async def list_rsvps(db: Session = Depends(get_db)):
+    """Get all RSVPs"""
     try:
-        registry_items = [
-            {
-                "id": 1,
-                "name": "Refrigerator",
-                "category": "Appliances",
-                "icon": "❄️"
-            },
-            {
-                "id": 2,
-                "name": "Generator",
-                "category": "Power",
-                "icon": "⚡"
-            },
-            {
-                "id": 3,
-                "name": "Washing Machine",
-                "category": "Appliances",
-                "icon": "🔄"
-            },
-            {
-                "id": 4,
-                "name": "Microwave",
-                "category": "Kitchen",
-                "icon": "🍳"
-            },
-            {
-                "id": 5,
-                "name": "Air Conditioner",
-                "category": "Climate",
-                "icon": "❄️"
-            },
-            {
-                "id": 6,
-                "name": "Home Theater System",
-                "category": "Entertainment",
-                "icon": "🎬"
-            },
-            {
-                "id": 7,
-                "name": "Dinning Set",
-                "category": "Furniture",
-                "icon": "🎣"
-            }
-        ]
-        
-        return {
-            "success": True,
-            "items": registry_items,
-            "total": len(registry_items)
-        }
-
+        rsvps = db.query(RSVP).all()
+        return RSVPList(
+            total=len(rsvps),
+            rsvps=rsvps
+        )
     except Exception as e:
-        print(f"Error fetching registry: {str(e)}")
+        logger.error(f"Error fetching RSVPs: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error fetching RSVPs")
+
+@app.get("/api/rsvp/{rsvp_id}", response_model=RSVPResponse)
+async def get_rsvp(rsvp_id: int, db: Session = Depends(get_db)):
+    """Get specific RSVP by ID"""
+    try:
+        rsvp = db.query(RSVP).filter(RSVP.id == rsvp_id).first()
+        if not rsvp:
+            raise HTTPException(status_code=404, detail="RSVP not found")
+        return rsvp
+    except Exception as e:
+        logger.error(f"Error fetching RSVP: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error fetching RSVP")
+
+# ===================================
+# GIFT REGISTRY ENDPOINTS
+# ===================================
+
+@app.get("/api/registry", response_model=GiftRegistryList)
+async def list_registry(db: Session = Depends(get_db)):
+    """Get all gift registry items"""
+    try:
+        items = db.query(GiftRegistry).all()
+        return GiftRegistryList(
+            total=len(items),
+            items=items
+        )
+    except Exception as e:
+        logger.error(f"Error fetching registry: {str(e)}")
         raise HTTPException(status_code=500, detail="Error fetching registry")
+
+@app.patch("/api/registry/{item_id}", response_model=GiftRegistryResponse)
+async def update_registry_item(
+    item_id: int,
+    update: GiftRegistryUpdate,
+    db: Session = Depends(get_db)
+):
+    """Update gift registry item (mark as completed, add contribution)"""
+    try:
+        item = db.query(GiftRegistry).filter(GiftRegistry.id == item_id).first()
+        if not item:
+            raise HTTPException(status_code=404, detail="Registry item not found")
+        
+        if update.contributed_by:
+            item.contributed_by = update.contributed_by
+        if update.contribution_amount:
+            item.contribution_amount = update.contribution_amount
+        if update.is_completed is not None:
+            item.is_completed = update.is_completed
+        
+        db.commit()
+        db.refresh(item)
+        
+        logger.info(f"Registry item {item_id} updated")
+        return item
+        
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error updating registry item: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error updating registry item")
+
+# ===================================
+# WEDDING EVENTS ENDPOINTS
+# ===================================
+
+@app.get("/api/events", response_model=WeddingEventList)
+async def list_events(db: Session = Depends(get_db)):
+    """Get all wedding events"""
+    try:
+        events = db.query(WeddingEvent).all()
+        return WeddingEventList(
+            total=len(events),
+            events=events
+        )
+    except Exception as e:
+        logger.error(f"Error fetching events: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error fetching events")
 
 # ===================================
 # ERROR HANDLERS
@@ -227,7 +235,7 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
+        host=config.API_HOST,
+        port=config.API_PORT,
+        reload=config.API_RELOAD
     )

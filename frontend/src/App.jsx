@@ -1,673 +1,549 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
-import { Music, Moon, Sun, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Sun,
+  Moon,
+  Volume2,
+  VolumeX,
+  Calendar,
+  Church,
+  MapPin,
+  Camera,
+  Upload,
+  Copy,
+  Check,
+  X,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Send,
+  Code2,
+} from "lucide-react";
+import "./App.css";
 
-function App() {
-  const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : false;
-  });
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-  const [envelopeOpened, setEnvelopeOpened] = useState(() => {
-    return localStorage.getItem('envelopeOpened') === 'true';
-  });
-
-  const [musicPlaying, setMusicPlaying] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // RSVP Form state
+export default function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedGift, setSelectedGift] = useState(null);
+  const [copiedAccount, setCopiedAccount] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [rsvpStatus, setRsvpStatus] = useState({ loading: false, msg: "", error: false });
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    attendance: '',
-    guests: '1',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    attendance: "yes",
+    guests: "1",
+    message: "",
   });
 
-  const [formStatus, setFormStatus] = useState('idle'); // idle, loading, success, error
-  const [formMessage, setFormMessage] = useState('');
-  const [showDonationModal, setShowDonationModal] = useState(false);
+  // Local audio file in public/audio/endlessLove.mp3
+  const audioRef = useRef(new Audio("/audio/endlessLove.mp3"));
 
-  // Sample carousel images
-  const couplePictures = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1537633552985-caf4165fb2b9?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1537633552985-caf4165fb2b9?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1537633552985-caf4165fb2b9?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
-  ];
-
-  const audioRef = useRef(null);
-
-  // Dress Code Information
-  const dressCodeInfo = {
-    men: {
-      title: 'For Him',
-      icon: '👔',
-      mainAttire: 'Formal Suit & Tie',
-      colorNote: 'With a touch of Sea Green, Forest Green, or Ivory',
-      details: [
-        'Pocket square or tie in our wedding colors',
-        'Classic dress shoes',
-        'Cufflinks welcome'
-      ]
-    },
-    women: {
-      title: 'For Her',
-      icon: '👗',
-      mainAttire: 'Formal Dress',
-      colorNote: 'In soft or muted tones with our colors',
-      details: [
-        'Floor-length gown preferred',
-        'Soft pastels with Sea Green, Forest Green, or Ivory',
-        'Elegant accessories'
-      ]
-    }
-  };
-
-  // Sample registry items (customize with your items)
-  const registryItems = [
-    { name: 'Refrigerator', category: 'Appliances', icon: '❄️' },
-    { name: 'Generator', category: 'Power', icon: '⚡' },
-    { name: 'Washing Machine', category: 'Appliances', icon: '🔄' },
-    { name: 'Microwave', category: 'Kitchen', icon: '🍳' },
-    { name: 'Air Conditioner', category: 'Climate', icon: '❄️' },
-    { name: 'Home Theater', category: 'Entertainment', icon: '🎬' },
-    { name: 'Dining Table Set', category: 'Furniture', icon: '🪑' },
-    { name: 'Bedroom Set', category: 'Furniture', icon: '🛏️' },
-    { name: 'Sofa Set', category: 'Furniture', icon: '🛋️' },
-    { name: 'Kitchen Utensils', category: 'Kitchen', icon: '🍽️' },
-  ];
-
-  const photoGalleryInfo = {
-    viewLink: process.env.REACT_APP_GOOGLE_DRIVE_VIEW_LINK || 'https://drive.google.com/drive/folders/1ef73AWYZ85rRvnmpP6wbHwVIgh7uGfPv?usp=drive_link',
-    uploadLink: process.env.REACT_APP_GOOGLE_DRIVE_UPLOAD_LINK || 'https://drive.google.com/drive/folders/1E86IDsTnDJxvPExmoj825e4sNvZ9f8QD?usp=drive_link'
-  };
-
-  // Save envelope state
   useEffect(() => {
-    localStorage.setItem('envelopeOpened', envelopeOpened.toString());
-  }, [envelopeOpened]);
+    const audio = audioRef.current;
+    audio.loop = true;
 
-  // Save theme preference
-  useEffect(() => {
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
+    return () => {
+      audio.pause();
+    };
+  }, []);
 
-  // Auto-advance carousel every 7 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev === couplePictures.length - 1 ? 0 : prev + 1));
-    }, 7000);
-    return () => clearInterval(timer);
-  }, [couplePictures.length]);
-
-  // Toggle music
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (musicPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setMusicPlaying(!musicPlaying);
+  const toggleAudio = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().catch((err) => console.log("Audio play error:", err));
+      setIsPlaying(true);
     }
   };
 
-  // Carousel navigation
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? couplePictures.length - 1 : prev - 1));
+  const handleCopyAccount = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedAccount(true);
+    setTimeout(() => setCopiedAccount(false), 2500);
   };
 
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === couplePictures.length - 1 ? 0 : prev + 1));
-  };
-
-  // Form handlers
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const validateForm = () => {
-    if (!formData.name.trim()) {
-      setFormMessage('Please enter your name');
-      return false;
-    }
-    if (!formData.email.trim()) {
-      setFormMessage('Please enter your email');
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setFormMessage('Please enter a valid email');
-      return false;
-    }
-    if (!formData.phone.trim()) {
-      setFormMessage('Please enter your phone number');
-      return false;
-    }
-    if (!formData.attendance) {
-      setFormMessage('Please select your attendance status');
-      return false;
-    }
-    return true;
-  };
-
-  const handleFormSubmit = async (e) => {
+  const handleRSVPSubmit = async (e) => {
     e.preventDefault();
-    setFormMessage('');
-
-    if (!validateForm()) {
-      setFormStatus('error');
-      return;
-    }
-
-    setFormStatus('loading');
+    setRsvpStatus({ loading: true, msg: "", error: false });
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rsvp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const res = await fetch(`${API_BASE_URL}/api/rsvp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to submit RSVP");
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setFormStatus('success');
-        setFormMessage('✅ RSVP submitted successfully! Thank you for confirming your attendance.');
-        
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          attendance: '',
-          guests: '1',
-          message: ''
-        });
-
-        // Show donation modal after 2 seconds
-        setTimeout(() => {
-          setShowDonationModal(true);
-        }, 2000);
-      } else {
-        setFormStatus('error');
-        setFormMessage(data.error || 'Failed to submit RSVP. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setFormStatus('error');
-      setFormMessage('Error connecting to server. Please check your internet connection.');
+      setRsvpStatus({ loading: false, msg: "Thank you! Your RSVP is confirmed.", error: false });
+      setFormData({ name: "", email: "", phone: "", attendance: "yes", guests: "1", message: "" });
+    } catch (err) {
+      setRsvpStatus({ loading: false, msg: err.message, error: true });
     }
   };
 
-  // Envelope opening screen (before website opens)
-  if (!envelopeOpened) {
-    return (
-      <div className={`envelope-container ${isDark ? 'dark' : 'light'}`}>
-        <audio ref={audioRef} loop>
-          <source src="https://music.youtube.com/playlist?list=OLAK5uy_k0ljSUoCPETK141cf4JW2SiLH8_4erg0k" type="audio/mpeg" />
-        </audio>
+  const loveStoryImages = [
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Our First Meeting in Lagos" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Nights Out" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "The Proposal" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Our Engagement" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our First Trip Together" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Family Gatherings" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Milestones" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Hobbies" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Special Occasions" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Everyday Moments" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Friends Wedding" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Achievements" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Foods" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Music" },
+    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Movies" },
+    
 
-        <div className="envelope-wrapper">
-          <div className="envelope" onClick={() => setEnvelopeOpened(true)}>
-            <div className="envelope-flap"></div>
-            <div className="envelope-body">
-              <div className="envelope-text">CO</div>
-            </div>
-          </div>
-          <p className="envelope-hint">Click to open our invitation</p>
-        </div>
 
-        <button 
-          className="theme-toggle" 
-          onClick={() => setIsDark(!isDark)} 
-          title="Toggle theme"
-        >
-          {isDark ? <Sun size={24} /> : <Moon size={24} />}
-        </button>
-      </div>
-    );
+  ];
+
+  const registryItems = [
+  { 
+    id: 1, 
+    name: "4-Burner Gas Cooker", 
+    category: "Gifts",
+    image: "/images/image-wed.jpg"
+  },
+  { 
+    id: 2, 
+    name: "Air Conditioner", 
+    category: "Gifts",
+    image: "/images/image-wed-2.jpg"
+  },
+  { 
+    id: 3, 
+    name: "Air Fryer", 
+    category: "Gifts",
+    image: "/images/image-wed-3.jpg"
+  },
+  { 
+    id: 4, 
+    name: "Cash Gift", 
+    category: "Gifts",
+    image: "/images/image-wed-4.jpg"
+  },
+  { 
+    id: 5, 
+    name: "Deep Freezer", 
+    category: "Gifts",
+    image: "/images/image-wed-5.jpg"
+  },
+  { 
+    id: 6, 
+    name: "Food Processor", 
+    category: "Gifts",
+    image: "frontend/public/images/pexels-photo-3962286.jpeg"
+  },
+  { 
+    id: 7, 
+    name: "Stainless Cookware", 
+    category: "Gifts",
+    image: "frontend/public/logo192.png"
+  },
+  { 
+    id: 8, 
+    name: "Washing Machine", 
+    category: "Gifts",
+    image: "frontend/public/images/pexels-photo-3938374.jpeg"
   }
+];
 
-  // Main website (after envelope opens)
+
+
+  const navLinks = [
+    { href: "#story", label: "Story" },
+    { href: "#details", label: "Details" },
+    { href: "#dresscode", label: "Dress Code" },
+    { href: "#registry", label: "Registry" },
+    { href: "#rsvp", label: "RSVP" },
+    { href: "#gallery", label: "Gallery" }
+  ];
+
   return (
-    <div className={`wedding-website ${isDark ? 'dark' : 'light'}`}>
-      <audio ref={audioRef} loop>
-        <source src="https://music.youtube.com/playlist?list=OLAK5uy_k0ljSUoCPETK141cf4JW2SiLH8_4erg0k" type="audio/mpeg" />
-      </audio>
+    <div className={`wedding-website ${darkMode ? "dark" : "light"}`}>
+      {/* Navbar */}
+      <header className="navbar">
+        <div className="nav-container">
+          <a href="#hero" className="nav-brand">#OCtheOkoyes26</a>
+          
+          {/* Desktop Nav */}
+          <nav className="nav-links desktop-nav">
+            {navLinks.map((link) => (
+              <a key={link.href} href={link.href}>{link.label}</a>
+            ))}
+          </nav>
 
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="nav-brand">#OCtheOkoyes26</div>
-        <div className="nav-controls">
-          <button 
-            className="music-btn" 
-            onClick={toggleMusic} 
-            title="Toggle background music"
-          >
-            <Music size={20} />
-            {musicPlaying && <span className="pulse"></span>}
-          </button>
-          <button 
-            className="theme-toggle" 
-            onClick={() => setIsDark(!isDark)}
-            title="Toggle theme"
-          >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          {/* Controls */}
+          <div className="nav-controls">
+            <button className="control-btn" onClick={toggleAudio} title="Toggle Audio">
+              {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
+            </button>
+            <button className="control-btn" onClick={() => setDarkMode(!darkMode)} title="Toggle Theme">
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button 
+              className="control-btn mobile-menu-toggle" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="hero">
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <nav className="mobile-nav">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        )}
+      </header>
+
+      {/* Hero */}
+      <section className="hero" id="hero">
         <div className="hero-content">
           <h1 className="hero-title">Onyinye & Chisom</h1>
           <p className="hero-subtitle">Are Getting Married</p>
           <div className="hero-date">
             <span>31.10.26</span>
             <span className="dot">•</span>
-            <span>#OCtheOkoyes26</span>
+            <span>#OCTheOkoyes26</span>
           </div>
-          <div className="hero-divider"></div>
+          <a href="#rsvp" className="hero-cta">RSVP Attendance</a>
         </div>
-
-        {/* Floating decorative elements */}
-        <div className="floating-element top-left"></div>
-        <div className="floating-element bottom-right"></div>
       </section>
 
-      {/* Photo Carousel Section */}
-      <section className="carousel-section">
+      {/* Love Story */}
+      <section id="story" className="section story-section">
         <h2 className="section-title">Our Love Story</h2>
-        
-        <div className="carousel-container">
-          {/* Previous Button */}
+        <div className="carousel">
           <button 
             className="carousel-btn prev" 
-            onClick={handlePrevImage}
-            title="Previous photo"
+            onClick={() => setCurrentSlide((prev) => (prev === 0 ? loveStoryImages.length - 1 : prev - 1))}
           >
-            <ChevronLeft size={32} />
+            <ChevronLeft size={22} />
           </button>
-
-          {/* Main Image */}
-          <div className="carousel-image-wrapper">
-            <img 
-              src={couplePictures[currentImageIndex]} 
-              alt={`Couples ${currentImageIndex + 1}`}
-              className="carousel-image"
-            />
+          <div className="carousel-view">
+            <img src={loveStoryImages[currentSlide].url} alt={loveStoryImages[currentSlide].caption} />
+            <p className="carousel-caption">{loveStoryImages[currentSlide].caption}</p>
           </div>
-
-          {/* Next Button */}
           <button 
             className="carousel-btn next" 
-            onClick={handleNextImage}
-            title="Next photo"
+            onClick={() => setCurrentSlide((prev) => (prev === loveStoryImages.length - 1 ? 0 : prev + 1))}
           >
-            <ChevronRight size={32} />
+            <ChevronRight size={22} />
           </button>
         </div>
+      </section>
 
-        {/* Dot Indicators */}
-        <div className="carousel-indicators">
-          {couplePictures.map((_, idx) => (
-            <button
-              key={idx}
-              className={`indicator ${idx === currentImageIndex ? 'active' : ''}`}
-              onClick={() => setCurrentImageIndex(idx)}
-              title={`Go to photo ${idx + 1}`}
-              aria-label={`Photo ${idx + 1}`}
-            />
+      {/* Narrative Story Section */}
+      <section id="journey" className="section story-narrative-section">
+        <h2 className="section-title">Our Journey</h2>
+        <p className="section-subtitle">From a chance encounter to a lifetime promise</p>
+
+        <div className="timeline-container">
+          {/* Milestone 1 */}
+          <div className="timeline-item">
+            <div className="timeline-badge">01</div>
+            <div className="timeline-content">
+              <span className="timeline-date">The First Encounter</span>
+              <h3>How We Met</h3>
+              <p>
+                From a simple introduction by our mutual friend, Odiaka Ambrose Emmanuel at the Boat Station. 
+                What began as casual banter quickly turned into hours of shared laughter, mutual curiosity, 
+                and the undeniable feeling that this was the beginning of something extraordinary.
+              </p>
+            </div>
+          </div>
+
+          {/* Milestone 2 */}
+          <div className="timeline-item">
+            <div className="timeline-badge">02</div>
+            <div className="timeline-content">
+              <span className="timeline-date">Growing Together</span>
+              <h3>How Our Love Blossomed</h3>
+              <p>
+                Through late-night conversations, shared dreams, quiet triumphs, some disagreements, and unwavering support 
+                through every season, our bond grew deeper. We learned each other’s rhythms, celebrated each other’s 
+                wins, and found in one another a true best friend, confidant, and partner in purpose.
+              </p>
+            </div>
+          </div>
+
+          {/* Milestone 3 */}
+          <div className="timeline-item">
+            <div className="timeline-badge">03</div>
+            <div className="timeline-content">
+              <span className="timeline-date">The Forever Choice</span>
+              <h3>The Proposal & Next Chapter</h3>
+              <p>
+                Choosing each other wasn’t just a moment; it was a culmination of every shared memory, prayer, 
+                and promise. With joyful hearts and full confidence, we made the decision to walk hand-in-hand 
+                into forever, anchored by love and blessed by grace; all now rooted in Christ's Love.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Romantic Quote Banner */}
+        <div className="story-quote-box">
+          <p className="story-quote">
+            Having you is far more valuabale than the riches the world can ever give to us.”
+          </p>
+        </div>
+      </section>
+
+      {/* Quick Details */}
+      <section id="details" className="section">
+        <h2 className="section-title">Wedding Schedule</h2>
+        <div className="card-grid">
+          <div className="info-card">
+            <Calendar className="icon" size={28} />
+            <h3>Wedding Date</h3>
+            <p>Saturday, October 31, 2026 - 11:00 AM</p>
+          </div>
+          <div className="info-card">
+            <Church className="icon" size={28} />
+            <h3>Wedding Mass</h3>
+            <p>Holy Family Catholic Church, Woji</p>
+          </div>
+          <div className="info-card">
+            <MapPin className="icon" size={28} />
+            <h3>Wedding Reception</h3>
+            <p>De Loft Event; 4 Ezigbakagbaka, Woji </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Dress Code */}
+      <section id="dresscode" className="section">
+        <h2 className="section-title">Dress Code</h2>
+        <p className="section-subtitle">Formal Elegant Evening</p>
+        <div className="dress-grid">
+          <div className="dress-card">
+            <h3>For Him</h3>
+            <h4>Formal Suit & Tie</h4>
+            <p className="dress-note">With a touch of Sea Green, Forest Green, or Ivory</p>
+            <ul>
+              <li>Pocket square or tie in our wedding colors</li>
+              <li>Classic dress shoes</li>
+              <li>Cufflinks welcome</li>
+            </ul>
+          </div>
+          <div className="dress-card">
+            <h3>For Her</h3>
+            <h4>Formal Dress</h4>
+            <p className="dress-note">In soft or muted tones with our colors</p>
+            <ul>
+              <li>Floor-length gown preferred</li>
+              <li>Soft pastels with Sea Green, Forest Green, or Ivory</li>
+              <li>Elegant accessories</li>
+            </ul>
+          </div>
+        </div>
+        <div className="swatches">
+          <div className="swatch-item">
+            <div className="swatch" style={{ background: "#8FB9A8" }}></div>
+            <span>Sea Green</span>
+          </div>
+          <div className="swatch-item">
+            <div className="swatch" style={{ background: "#285943" }}></div>
+            <span>Forest Green</span>
+          </div>
+          <div className="swatch-item">
+            <div className="swatch" style={{ background: "#F6F0E3", border: "1px solid #ddd" }}></div>
+            <span>Ivory</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Gift Registry */}
+      <section id="registry" className="section">
+        <h2 className="section-title">Our Gift Registry</h2>
+        <p className="section-subtitle">Help us build our home together</p>
+        <div className="registry-grid">
+          {registryItems.map((item) => (
+            <div key={item.id} className="registry-card">
+              <img src={item.image} alt={item.name} className="registry-item-image" />
+              <div className="registry-icon">{item.icon}</div>
+              <h3 className="registry-item-name">{item.name}</h3>
+              <p className="registry-category">{item.category}</p>
+              <button className="registry-btn" onClick={() => setSelectedGift(item)}>
+                        Contribute
+                      </button>
+            </div>
           ))}
         </div>
-
-        {/* Photo Counter */}
-        <p className="carousel-counter">
-          {currentImageIndex + 1} of {couplePictures.length}
-        </p>
       </section>
 
-      {/* RSVP Form Section */}
-      <section className="rsvp-section">
-        <h2 className="section-title">Confirm Your Attendance</h2>
-        <p className="section-subtitle">We'd love to have you celebrate with us!</p>
-
-        <form className="rsvp-form" onSubmit={handleFormSubmit}>
-          {/* Name */}
-          <div className="form-group">
-            <label htmlFor="name">Full Name *</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Your full name"
-              required
-            />
-          </div>
-
-          {/* Email */}
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="your.email@example.com"
-              required
-            />
-          </div>
-
-          {/* Phone */}
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number *</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="+234 XXX XXX XXXX"
-              required
-            />
-          </div>
-
-          {/* Attendance Status */}
-          <div className="form-group">
-            <label htmlFor="attendance">Will you be attending? *</label>
-            <select
-              id="attendance"
-              name="attendance"
-              value={formData.attendance}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">-- Select an option --</option>
-              <option value="yes">Yes, I'll be there! 🎉</option>
-              <option value="maybe">Maybe, I'll let you know 🤔</option>
-              <option value="no">Sorry, can't make it 😢</option>
-            </select>
-          </div>
-
-          {/* Number of Guests */}
-          <div className="form-group">
-            <label htmlFor="guests">Number of Guests</label>
-            <select
-              id="guests"
-              name="guests"
-              value={formData.guests}
-              onChange={handleInputChange}
-            >
-              <option value="1">1 guest</option>
-              <option value="2">2 guests</option>
-              <option value="3">3 guests</option>
-              <option value="4">4 guests</option>
-              <option value="5">5+ guests</option>
-            </select>
-          </div>
-
-          
-
-          {/* Message */}
-          <div className="form-group">
-            <label htmlFor="message">A Message for Us</label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleInputChange}
-              placeholder="Share your well-wishes and excitement!"
-              rows="4"
-            ></textarea>
-          </div>
-
-          {/* Status Message */}
-          {formMessage && (
-            <div className={`form-message ${formStatus}`}>
-              {formMessage}
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button 
-            type="submit" 
-            className="submit-btn"
-            disabled={formStatus === 'loading'}
-          >
-            {formStatus === 'loading' ? (
-              <>
-                <span className="spinner"></span>
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send size={20} />
-                Submit RSVP
-              </>
-            )}
-          </button>
-        </form>
-      </section>
-
-      {/* Quick Info Section */}
-      <section className="quick-info">
-        <div className="info-card">
-          <span className="info-icon">📅</span>
-          <h3>Date</h3>
-          <p>Saturday, August 16, 2026</p>
-        </div>
-        <div className="info-card">
-          <span className="info-icon">🕐</span>
-          <h3>Time</h3>
-          <p>3:00 PM - 11:00 PM</p>
-        </div>
-        <div className="info-card">
-          <span className="info-icon">📍</span>
-          <h3>Venue</h3>
-          <p>The Grand Event Center, Lagos</p>
-        </div>
-      </section>
-
-      {/* Donation Modal */}
-      {showDonationModal && (
-        <div className="modal-overlay" onClick={() => setShowDonationModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="modal-close" 
-              onClick={() => setShowDonationModal(false)}
-              title="Close modal"
-            >
-              ✕
+      {/* Sponsor Gift Modal */}
+      {selectedGift && (
+        <div className="modal-overlay" onClick={() => setSelectedGift(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedGift(null)}>
+              <X size={20} />
             </button>
-            
-            <div className="modal-header">
-              <span className="modal-icon">💝</span>
-              <h2>Support Our Journey</h2>
-            </div>
-
-            <div className="donation-methods">
-              <div className="donation-card">
-                <h3>🏦 Bank Transfer</h3>
-                <div className="account-detail">
-                  <span className="label">Account Name:</span>
-                  <span className="value">Chisom E. Okoye</span>
-                </div>
-                <div className="account-detail">
-                  <span className="label">Account Number:</span>
-                  <span className="value">1234567890</span>
-                </div>
-                <div className="account-detail">
-                  <span className="label">Bank:</span>
-                  <span className="value">First Bank Nigeria</span>
-                </div>
-              </div>
-
-              <div className="donation-card">
-                <h3>📱 Mobile Money</h3>
-                <div className="account-detail">
-                  <span className="label">WhatsApp/Call:</span>
-                  <span className="value">+234 XXX XXX XXXX</span>
-                </div>
-                <div className="account-detail">
-                  <span className="label">Name:</span>
-                  <span className="value">Chisom Emmanuel Okoye</span>
-                </div>
-              </div>
-            </div>
-
-            <p className="donation-thanks">
-              Your generosity means the world to us! 💚
+            <h3>Sponsor {selectedGift.name}</h3>
+            <p className="modal-desc">
+              You can make a direct transfer to the wedding account details below:
             </p>
+            <div className="account-box">
+              <div className="account-row">
+                <span>Bank:</span>
+                <strong>Standard Chartered Bank</strong>
+              </div>
+              <div className="account-row">
+                <span>Account Name:</span>
+                <strong>Chisom Okoye</strong>
+              </div>
+              <div className="account-row">
+                <span>Account Number:</span>
+                <strong className="acc-num">000 6192 192</strong>
+              </div>
+            </div>
+            <button className="copy-action-btn" onClick={() => handleCopyAccount("000 6192 192")}>
+              {copiedAccount ? <Check size={18} /> : <Copy size={18} />}
+              {copiedAccount ? "Account Number Copied!" : "Copy Account Number"}
+            </button>
           </div>
         </div>
       )}
 
-      {/* Dress Code Section */}
-      <section className="dresscode-section">
-        <h2 className="section-title">Dress Code</h2>
-        <p className="section-subtitle">Formal Elegant Evening</p>
-
-        <div className="dresscode-grid">
-          {/* Men's Dress Code */}
-          <div className="dresscode-card men-card">
-            <div className="dresscode-icon">{dressCodeInfo.men.icon}</div>
-            <h3>{dressCodeInfo.men.title}</h3>
-            <p className="dress-attire">{dressCodeInfo.men.mainAttire}</p>
-            <p className="dress-color">{dressCodeInfo.men.colorNote}</p>
-            
-            <ul className="dress-details">
-              {dressCodeInfo.men.details.map((detail, idx) => (
-                <li key={idx}>{detail}</li>
-              ))}
-            </ul>
+      {/* RSVP */}
+      <section id="rsvp" className="section">
+        <h2 className="section-title">Confirm Your Attendance</h2>
+        <p className="section-subtitle">We'd love to have you celebrate with us!</p>
+        <form onSubmit={handleRSVPSubmit} className="rsvp-form">
+          <div className="form-group">
+            <label>Full Name *</label>
+            <input
+              type="text"
+              required
+              placeholder="Your full name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
           </div>
-
-          {/* Women's Dress Code */}
-          <div className="dresscode-card women-card">
-            <div className="dresscode-icon">{dressCodeInfo.women.icon}</div>
-            <h3>{dressCodeInfo.women.title}</h3>
-            <p className="dress-attire">{dressCodeInfo.women.mainAttire}</p>
-            <p className="dress-color">{dressCodeInfo.women.colorNote}</p>
-            
-            <ul className="dress-details">
-              {dressCodeInfo.women.details.map((detail, idx) => (
-                <li key={idx}>{detail}</li>
-              ))}
-            </ul>
+          <div className="form-group">
+            <label>Email Address *</label>
+            <input
+              type="email"
+              required
+              placeholder="your.email@example.com"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
           </div>
-        </div>
-
-        {/* Color Swatches */}
-        <div className="color-swatches">
-          <div className="swatch">
-            <div className="swatch-box" style={{ backgroundColor: '#2E8B8B' }}></div>
-            <p>Sea Green</p>
+          <div className="form-group">
+            <label>Phone Number *</label>
+            <input
+              type="tel"
+              required
+              placeholder="+234 XXX XXX XXXX"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
           </div>
-          <div className="swatch">
-            <div className="swatch-box" style={{ backgroundColor: '#228B22' }}></div>
-            <p>Forest Green</p>
+          <div className="form-group">
+            <label>Will you be attending? *</label>
+            <select
+              value={formData.attendance}
+              onChange={(e) => setFormData({ ...formData, attendance: e.target.value })}
+            >
+              <option value="yes">Yes, definitely</option>
+              <option value="maybe">Unsure</option>
+              <option value="no">Regretfully decline</option>
+            </select>
           </div>
-          <div className="swatch">
-            <div className="swatch-box" style={{ backgroundColor: '#F5F5DC' }}></div>
-            <p>Ivory</p>
+          <div className="form-group">
+            <label>Number of Guests</label>
+            <select
+              value={formData.guests}
+              onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+            >
+              <option value="1">1 guest</option>
+              <option value="2">2 guests</option>
+            </select>
           </div>
-        </div>
+          <div className="form-group full-width">
+            <label>A Message for Us</label>
+            <textarea
+              rows="3"
+              placeholder="Share your well-wishes and excitement!"
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            ></textarea>
+          </div>
+          {rsvpStatus.msg && (
+            <p className={`form-alert ${rsvpStatus.error ? "error" : "success"}`}>
+              {rsvpStatus.msg}
+            </p>
+          )}
+          <button type="submit" disabled={rsvpStatus.loading} className="form-submit-btn">
+            <Send size={18} /> {rsvpStatus.loading ? "Submitting..." : "Submit RSVP"}
+          </button>
+        </form>
       </section>
 
-      {/* Gift Registry Section */}
-      <section className="registry-section">
-        <h2 className="section-title">Our Gift Registry</h2>
-        <p className="section-subtitle">Help us build our home together</p>
-
-        <div className="registry-grid">
-          {registryItems.map((item, idx) => (
-            <div key={idx} className="registry-card">
-              <div className="registry-icon">{item.icon}</div>
-              <h3 className="registry-item-name">{item.name}</h3>
-              <p className="registry-category">{item.category}</p>
-              <button className="registry-btn">
-                Contribute
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Photo Gallery Section */}
-      <section className="gallery-section">
+      {/* Gallery */}
+      <section id="gallery" className="section">
         <h2 className="section-title">Our Wedding Moments</h2>
         <p className="section-subtitle">Share and celebrate our special day together</p>
-
-        <div className="gallery-buttons-container">
-          {/* View Photos Button */}
-          <div className="gallery-card view-card">
-            <div className="gallery-icon">📸</div>
+        <div className="gallery-grid">
+          <a href="https://drive.google.com/drive/folders/1ef73AWYZ85rRvnmpP6wbHwVIgh7uGfPv?usp=sharing" target="_blank" rel="noreferrer" className="gallery-card">
+            <Camera className="gallery-icon" size={40} />
             <h3>View Wedding Photos</h3>
-            <p className="gallery-description">Browse all our beautiful moments</p>
-            <a 
-              href={photoGalleryInfo.viewLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gallery-btn view-btn"
-            >
-              View Gallery
-            </a>
-          </div>
-
-          {/* Upload Photos Button */}
-          <div className="gallery-card upload-card">
-            <div className="gallery-icon">📤</div>
+            <p>Browse all our beautiful moments</p>
+            <span className="gallery-pill">View Gallery</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1E86IDsTnDJxvPExmoj825e4sNvZ9f8QD?usp=drive_link" target="_blank" rel="noreferrer" className="gallery-card">
+            <Upload className="gallery-icon" size={40} />
             <h3>Share Your Photos</h3>
-            <p className="gallery-description">Upload your favorite moments from the wedding</p>
-            <a 
-              href={photoGalleryInfo.uploadLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gallery-btn upload-btn"
-            >
-              Upload Photos
-            </a>
-          </div>
+            <p>Upload your favorite moments from the wedding</p>
+            <span className="gallery-pill">Upload Photos</span>
+          </a>
         </div>
-
-        <p className="gallery-note">
-          💡 Click to open Google Drive in a new tab. You can easily upload your photos there!
-        </p>
       </section>
 
-
-      {/* Footer */}
+      {/* Footer (Aligned with header layout) */}
       <footer className="footer">
-        <p>💍 Made with love for our special day</p>
-        <p className="hashtag">#OCtheOkoyes26</p>
+        <div className="footer-container">
+          <div className="footer-meta">
+            <span className="footer-hash">#OCTheOkoyes26</span>
+          </div>
+          <div className="footer-credits">
+            <span><strong>Developer: </strong><a href="https://linkedin.com/in/chisomokoye" target="_blank" rel="noreferrer" className="footer-couple">Chisom Okoye</a></span>
+            <span><strong>Photography: </strong><a href="https://linkedin.com/in/studiolens" target="_blank" rel="noreferrer" className="footer-couple">BVS</a></span>
+          </div>
+          <div className="footer-code">
+            <a href="https://github.com/chisomokoye/octheokoyeswedding" target="_blank" rel="noreferrer"><Code2 size={16} />Source Code</a>
+          </div>
+        </div>
       </footer>
     </div>
   );
 }
-
-export default App;

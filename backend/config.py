@@ -1,15 +1,11 @@
 import os
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
 class Config:
-    # Google Sheets not to be used again and to be replaced.
-    # GOOGLE_SHEETS_CREDENTIALS = os.getenv('GOOGLE_SHEETS_CREDENTIALS')
-    # SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
-    # RSVP_SHEET_NAME = os.getenv('RSVP_SHEET_NAME', 'RSVP')
-    # REGISTRY_SHEET_NAME = os.getenv('REGISTRY_SHEET_NAME', 'Registry')
-    
     # API
     API_HOST = os.getenv('API_HOST', '0.0.0.0')
     API_PORT = int(os.getenv('API_PORT', 8000))
@@ -21,5 +17,28 @@ class Config:
     
     # Environment
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+    
+    # Database
+    DATABASE_URL = os.getenv(
+        'DATABASE_URL',
+        'postgresql://rsvpoctheokoyedb_user:tXWouKUSlSWyHflrEGdfZUmKa8hfH7Uo@dpg-daa9qfajnfac73fumrcg-a.oregon-postgres.render.com/rsvpoctheokoyedb'
+    )
 
 config = Config()
+
+# Database Setup
+engine = create_engine(
+    config.DATABASE_URL,
+    pool_pre_ping=True,
+    echo=False
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
