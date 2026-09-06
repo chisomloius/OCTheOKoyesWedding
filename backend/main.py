@@ -1,10 +1,15 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy import text
-from datetime import datetime
+import csv
+import io
 import logging
+import os
+from datetime import datetime
+
+from fastapi import FastAPI, HTTPException, Depends, Query, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from config import config, engine, get_db, Base
 from models import RSVP, GiftRegistry, WeddingEvent
@@ -151,7 +156,34 @@ async def get_rsvp(rsvp_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Error fetching RSVP: {str(e)}")
         raise HTTPException(status_code=500, detail="Error fetching RSVP")
+    
+@app.get("/api/admin/rsvps/export")
+def export_rsvps_csv(
+    token: str = Query(..., description="Admin security token"),
+    db: Session = Depends(get_db)
+):
+    # Protect your guest data with a security token passed in query parameter
+    ADMIN_SECRET = os.getenv("ADMIN_EXPORT_TOKEN", "wedding2026")
+    if token != ADMIN_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized access token")
 
+    records = db.query(RSVP).order_by(RSVP.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["ID", "Full Name", "Email", "Phone", "Attendance", "Guests", "Message", "Submission Time (UTC)"])
+
+    for r in records:
+        writer.writerow([r.id, r.name, r.email, r.phone, r.attendance, r.guests, r.message, r.created_at])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=rsvps_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+        }
+    )
 # ===================================
 # GIFT REGISTRY ENDPOINTS
 # ===================================

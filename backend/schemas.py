@@ -23,6 +23,10 @@ class RSVPList(BaseModel):
     total: int
     rsvps: list[RSVPResponse]
 
+class RSVPDownloadResponse(BaseModel):
+    total: int
+    csv_data: str
+    
 # ============ Gift Registry Schemas ============
 
 class GiftRegistryCreate(BaseModel):
