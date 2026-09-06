@@ -159,30 +159,31 @@ async def get_rsvp(rsvp_id: int, db: Session = Depends(get_db)):
     
 @app.get("/api/admin/rsvps/export")
 def export_rsvps_csv(
-    token: str = Query(..., description="Admin security token"),
+    token: str = Query(..., description="Admin authorization token"),
     db: Session = Depends(get_db)
 ):
-    # Protect your guest data with a security token passed in query parameter
-    ADMIN_SECRET = os.getenv("ADMIN_EXPORT_TOKEN", "wedding2026")
-    if token != ADMIN_SECRET:
-        raise HTTPException(status_code=401, detail="Unauthorized access token")
+    admin_token = os.getenv("ADMIN_EXPORT_TOKEN", "octheokoyes26")
+    if token != admin_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
-    records = db.query(RSVP).order_by(RSVP.created_at.desc()).all()
+    # Order by ID instead of created_at
+    records = db.query(RSVP).order_by(RSVP.id.desc()).all()
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["ID", "Full Name", "Email", "Phone", "Attendance", "Guests", "Message", "Submission Time (UTC)"])
+    writer.writerow(["ID", "Name", "Email", "Phone", "Attendance", "Guests", "Message", "Submitted At"])
 
     for r in records:
-        writer.writerow([r.id, r.name, r.email, r.phone, r.attendance, r.guests, r.message, r.created_at])
+        # Fallback safely if neither created_at nor timestamp exists on the model
+        submission_time = getattr(r, "created_at", getattr(r, "timestamp", "N/A"))
+        writer.writerow([r.id, r.name, r.email, r.phone, r.attendance, r.guests, r.message, submission_time])
 
     output.seek(0)
+    filename = f"rsvps_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={
-            "Content-Disposition": f"attachment; filename=rsvps_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
-        }
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 # ===================================
 # GIFT REGISTRY ENDPOINTS
