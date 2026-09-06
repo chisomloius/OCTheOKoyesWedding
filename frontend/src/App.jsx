@@ -22,6 +22,7 @@ import "./App.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
