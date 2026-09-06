@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
 from datetime import datetime
 import logging
 
@@ -70,7 +71,7 @@ async def health_check(db: Session = Depends(get_db)):
     """Health check endpoint with database connection test"""
     try:
         # Test database connection
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         db_status = "connected"
     except Exception as e:
         logger.error(f"Database connection failed: {str(e)}")
@@ -133,7 +134,7 @@ async def list_rsvps(db: Session = Depends(get_db)):
         rsvps = db.query(RSVP).all()
         return RSVPList(
             total=len(rsvps),
-            rsvps=rsvps
+            rsvps=[RSVPResponse.model_validate(rsvp) for rsvp in rsvps]
         )
     except Exception as e:
         logger.error(f"Error fetching RSVPs: {str(e)}")
@@ -162,7 +163,7 @@ async def list_registry(db: Session = Depends(get_db)):
         items = db.query(GiftRegistry).all()
         return GiftRegistryList(
             total=len(items),
-            items=items
+            items=[GiftRegistryResponse.model_validate(item) for item in items]
         )
     except Exception as e:
         logger.error(f"Error fetching registry: {str(e)}")
@@ -180,12 +181,12 @@ async def update_registry_item(
         if not item:
             raise HTTPException(status_code=404, detail="Registry item not found")
         
-        if update.contributed_by:
-            item.contributed_by = update.contributed_by
-        if update.contribution_amount:
-            item.contribution_amount = update.contribution_amount
+        if update.contributed_by is not None:
+            setattr(item, "contributed_by", update.contributed_by)
+        if update.contribution_amount is not None:
+            setattr(item, "contribution_amount", update.contribution_amount)
         if update.is_completed is not None:
-            item.is_completed = update.is_completed
+            setattr(item, "is_completed", update.is_completed)
         
         db.commit()
         db.refresh(item)
@@ -209,7 +210,7 @@ async def list_events(db: Session = Depends(get_db)):
         events = db.query(WeddingEvent).all()
         return WeddingEventList(
             total=len(events),
-            events=events
+            events=[WeddingEventResponse.model_validate(event) for event in events]
         )
     except Exception as e:
         logger.error(f"Error fetching events: {str(e)}")
