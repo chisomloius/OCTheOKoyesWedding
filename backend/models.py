@@ -3,6 +3,9 @@ from sqlalchemy.sql import func
 from datetime import datetime
 from config import Base
 
+#======================
+# Database Models
+
 class RSVP(Base):
     """RSVP Database Model"""
     __tablename__ = "rsvps"
