@@ -88,8 +88,9 @@ export default function App() {
   };
 
   const loveStoryImages = [
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Our First Meeting in Lagos" 
+    { 
+      url: "https://lh3.googleusercontent.com/d/1nLWi9uOSdjxP8tWvaTaHVypcJCpBwpj7", 
+      caption: "Our First Meeting" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
       caption: "Nights Out" 
@@ -97,20 +98,43 @@ export default function App() {
     { url: "https://lh3.googleusercontent.com/d/", 
       caption: "The Proposal" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Our Engagement" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our First Trip Together" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Family Gatherings" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Milestones" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Hobbies" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Special Occasions" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Everyday Moments" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Friends Wedding" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Celebrating Achievements" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Foods" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Music" },
-    { url: "https://lh3.googleusercontent.com/d/", caption: "Our Favorite Movies" },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Celebrating Our Engagement" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Our First Trip Together" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Family Gatherings" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Celebrating Birthday" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Our Trip" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "On the Beach" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "On the Sea" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Family Gatherings" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Celebrating Birthday" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "Our Trip" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "On the Beach" 
+    },
+    { url: "https://lh3.googleusercontent.com/d/", 
+      caption: "On the Sea" 
+    },
     
-
 
   ];
 
@@ -149,19 +173,19 @@ export default function App() {
     id: 6, 
     name: "Food Processor", 
     category: "Gifts",
-    image: "frontend/public/images/pexels-photo-3962286.jpeg"
+    image: "/images/image-wed-6.jpg"
   },
   { 
     id: 7, 
     name: "Stainless Cookware", 
     category: "Gifts",
-    image: "frontend/public/logo192.png"
+    image: "/images/image-wed-7.jpg"
   },
   { 
     id: 8, 
     name: "Washing Machine", 
     category: "Gifts",
-    image: "frontend/public/images/pexels-photo-3938374.jpeg"
+    image: "/images/image-wed-8.jpg"
   }
 ];
 
