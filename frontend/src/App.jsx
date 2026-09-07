@@ -93,7 +93,7 @@ export default function App() {
       url: "https://lh3.googleusercontent.com/d/1nLWi9uOSdjxP8tWvaTaHVypcJCpBwpj7", 
       caption: "Our First Meeting" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
+    { url: "https://lh3.googleusercontent.com/d/1cdLY1aTu29EsSSuX6zOoz8E5PO43Fkvj", 
       caption: "Nights Out" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
@@ -206,7 +206,7 @@ export default function App() {
       {/* Navbar */}
       <header className="navbar">
         <div className="nav-container">
-          <a href="#hero" className="nav-brand">#OCtheOkoyes26</a>
+          <a href="#hero" className="nav-brand">#OCTheOkoyes</a>
           
           {/* Desktop Nav */}
           <nav className="nav-links desktop-nav">
@@ -256,7 +256,7 @@ export default function App() {
           <div className="hero-date">
             <span>31.10.26</span>
             <span className="dot">•</span>
-            <span>#OCTheOkoyes26</span>
+            <span>#OCTheOkoyes</span>
           </div>
           <a href="#rsvp" className="hero-cta">RSVP Attendance</a>
         </div>
@@ -298,7 +298,7 @@ export default function App() {
               <span className="timeline-date">The First Encounter</span>
               <h3>How We Met</h3>
               <p>
-                From a simple introduction by our mutual friend, Odiaka Ambrose Emmanuel at the Boat Station. 
+                From a simple introduction by our mutual friend, Odiaka Ambrose at the Boat Station. 
                 What began as casual banter quickly turned into hours of shared laughter, mutual curiosity, 
                 and the undeniable feeling that this was the beginning of something extraordinary.
               </p>
@@ -558,14 +558,14 @@ export default function App() {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-meta">
-            <span className="footer-hash">#OCTheOkoyes26</span>
+            <span className="footer-hash">#OCTheOkoyes</span>
           </div>
           <div className="footer-credits">
             <span><strong>Developer: </strong><a href="https://linkedin.com/in/chisomokoye" target="_blank" rel="noreferrer" className="footer-couple">Chisom Okoye</a></span>
-            <span><strong>Photography: </strong><a href="https://linkedin.com/in/studiolens" target="_blank" rel="noreferrer" className="footer-couple">BVS</a></span>
+            <span><strong>Media: </strong><a href="https://instagram.com/beaconvibesocials" target="_blank" rel="noreferrer" className="footer-couple">BVS</a></span>
           </div>
           <div className="footer-code">
-            <a href="https://github.com/chisomokoye/octheokoyeswedding" target="_blank" rel="noreferrer"><Code2 size={16} />Source Code</a>
+            <a href="https://github.com/chisomloius/OCTheOKoyesWedding" target="_blank" rel="noreferrer"><Code2 size={16} />Source Code</a>
           </div>
         </div>
       </footer>
