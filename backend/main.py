@@ -30,14 +30,17 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI
 app = FastAPI(
     title="Wedding Website API",
-    description="API for Chisom & Onyinye's wedding - #OCtheOkoyes26",
+    description="API for Chisom & Onyinye's wedding - #OCtheOkoyes",
     version="1.0.0"
 )
 
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[config.FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "https://octheokoyes.netlify.app",  # Your Netlify frontend
+        "http://localhost:3000",  # For local testing
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
