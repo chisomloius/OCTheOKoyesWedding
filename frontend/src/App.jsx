@@ -91,52 +91,35 @@ export default function App() {
   const loveStoryImages = [
     { 
       url: "https://lh3.googleusercontent.com/d/1nLWi9uOSdjxP8tWvaTaHVypcJCpBwpj7", 
-      caption: "Our First Meeting" 
+      caption: "Sunny Sunday Rendezvous"
     },
     { url: "https://lh3.googleusercontent.com/d/1cdLY1aTu29EsSSuX6zOoz8E5PO43Fkvj", 
       caption: "Nights Out" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "The Proposal" 
-    },
-    { url: "https://lh3.googleusercontent.com/d/", 
+    { url: "https://lh3.googleusercontent.com/d/15emwpryZmXmNuw8Xnf6NcWr1W8oYqFf5", 
       caption: "Celebrating Our Engagement" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Our First Trip Together" 
+    { url: "https://lh3.googleusercontent.com/d/1tMN-dgBgzkK5V5ysvK7p-I4b0zq9NbgZ", 
+      caption: "In the Middle of Sea" 
     },
     { url: "https://lh3.googleusercontent.com/d/1itv9GuMyRItc-PjR4laKD2s8fqS9pCWU", 
-      caption: "Family Gatherings" 
+      caption: "Marriage Introduction" 
     },
-    { url: "https://lh3.googleusercontent.com/d/16Mfx4GlVrH6rMZmFlmNXc9BiHm5E1ai2", 
-      caption: "Our Roadside Pictures" 
+    { url: "https://lh3.googleusercontent.com/d/1tV9B_WSQaYqJ-qHvdcWh6jlfHiSIevEp", 
+      caption: "Roadside Pictures" 
     },
     { url: "https://lh3.googleusercontent.com/d/1yL8v90oS6w2GOeduzGNu2RM14UX0l_ti", 
-      caption: "Our Friends' Wedding" 
+      caption: "Wedding Guests" 
     },
-    { url: "https://lh3.googleusercontent.com/d/1zrSVZtIbx9oMKYAmJUkdl9sjnXyU1CFv", 
-      caption: "Time out at the Beach" 
+    { url: "https://lh3.googleusercontent.com/d/1xrkmqjmhmB2sI6JKE65JRzSNtCELOPyo", 
+      caption: "On Board Trip Together" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "On the Sea" 
+    { url: "https://lh3.googleusercontent.com/d/1Ansxf15DTZ5LHCig-Aa31G4zv_O8jozm", 
+      caption: "Goofy Moments" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Our Second Trip Together" 
-    },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Celebrating Birthdays" 
-    },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Our Trip" 
-    },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "On the Beach" 
-    },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "On the Sea" 
-    },
-    
-
+    { url: "https://lh3.googleusercontent.com/d/1yDZGmqc9qg1roUTzD6QWKA-WbYYsTu9t", 
+      caption: "Standing Together" 
+    }
   ];
 
   const registryItems = [
@@ -359,7 +342,7 @@ export default function App() {
           <div className="info-card">
             <MapPin className="icon" size={28} />
             <h3>Wedding Reception</h3>
-            <p>De Loft Event; 4 Ezigbakagbaka, Woji </p>
+            <p>The Loft Event; 4 Ezigbakagbaka, Woji </p>
           </div>
         </div>
       </section>
