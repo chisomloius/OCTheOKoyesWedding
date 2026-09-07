@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import "./App.css";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://octheokoyesweddingapi.onrender.com/";
 
 
 export default function App() {
@@ -371,22 +371,22 @@ export default function App() {
         <div className="dress-grid">
           <div className="dress-card">
             <h3>For Him</h3>
-            <h4>Formal Suit & Tie</h4>
-            <p className="dress-note">With a touch of Sea Green, Forest Green, or Ivory</p>
+            <h4>Suit & Tie</h4>
+            <p className="dress-note">With a touch of Sea Green, Forest Green</p>
             <ul>
-              <li>Pocket square or tie in our wedding colors</li>
+              <li>A suit in Black, Navy, or other dark formal tones</li>
+              <li>A touch of our wedding colors on your suit accessories</li>
               <li>Classic dress shoes</li>
-              <li>Cufflinks welcome</li>
             </ul>
           </div>
           <div className="dress-card">
             <h3>For Her</h3>
             <h4>Formal Dress</h4>
-            <p className="dress-note">In soft or muted tones with our colors</p>
+            <p className="dress-note">Elegant Evening Dress</p>
             <ul>
-              <li>Floor-length gown preferred</li>
-              <li>Soft pastels with Sea Green, Forest Green, or Ivory</li>
-              <li>Elegant accessories</li>
+              <li>Floor-length or midi/maxi dresses</li>
+              <li>Soft pastels or neutral tones</li>
+              <li>Elegant accessories and formal footwear</li>
             </ul>
           </div>
         </div>
