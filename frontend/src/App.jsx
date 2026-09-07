@@ -105,26 +105,26 @@ export default function App() {
     { url: "https://lh3.googleusercontent.com/d/", 
       caption: "Our First Trip Together" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
+    { url: "https://lh3.googleusercontent.com/d/1itv9GuMyRItc-PjR4laKD2s8fqS9pCWU", 
       caption: "Family Gatherings" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Celebrating Birthday" 
+    { url: "https://lh3.googleusercontent.com/d/16Mfx4GlVrH6rMZmFlmNXc9BiHm5E1ai2", 
+      caption: "Our Roadside Pictures" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Our Trip" 
+    { url: "https://lh3.googleusercontent.com/d/1yL8v90oS6w2GOeduzGNu2RM14UX0l_ti", 
+      caption: "Our Friends' Wedding" 
     },
-    { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "On the Beach" 
+    { url: "https://lh3.googleusercontent.com/d/1zrSVZtIbx9oMKYAmJUkdl9sjnXyU1CFv", 
+      caption: "Time out at the Beach" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
       caption: "On the Sea" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Family Gatherings" 
+      caption: "Our Second Trip Together" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
-      caption: "Celebrating Birthday" 
+      caption: "Celebrating Birthdays" 
     },
     { url: "https://lh3.googleusercontent.com/d/", 
       caption: "Our Trip" 
@@ -372,11 +372,11 @@ export default function App() {
           <div className="dress-card">
             <h3>For Him</h3>
             <h4>Suit & Tie</h4>
-            <p className="dress-note">With a touch of Sea Green, Forest Green</p>
+            <p className="dress-note">A touch of Sea Green or Forest Green</p>
             <ul>
-              <li>A suit in Black, Navy, or other dark formal tones</li>
-              <li>A touch of our wedding colors on your suit accessories</li>
-              <li>Classic dress shoes</li>
+              <li>A suit in Black, Charcoal, Navy, or other dark formal tones</li>
+              <li>Matching shoes and accessories</li>
+              <li>Kindly avoid: White, ivory, cream, beige/nude or bright shades</li>
             </ul>
           </div>
           <div className="dress-card">
@@ -384,9 +384,9 @@ export default function App() {
             <h4>Formal Dress</h4>
             <p className="dress-note">Elegant Evening Dress</p>
             <ul>
-              <li>Floor-length or midi/maxi dresses</li>
-              <li>Soft pastels or neutral tones</li>
-              <li>Elegant accessories and formal footwear</li>
+              <li>Floor-length gowns or midi/maxi dresses</li>
+              <li>Matching shoes and accessories</li>
+              <li>Kindly avoid: White, ivory, cream, beige/nude or bright shades</li>
             </ul>
           </div>
         </div>
@@ -511,7 +511,6 @@ export default function App() {
               onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
             >
               <option value="1">1 guest</option>
-              <option value="2">2 guests</option>
             </select>
           </div>
           <div className="form-group full-width">
