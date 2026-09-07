@@ -16,7 +16,9 @@ class Config:
     BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
     
     # Environment
-    ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+    # ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+    ENVIRONMENT = os.getenv('ENVIRONMENT', 'production')  # Change to 'production' for deployment
+
     
     # Database
     DATABASE_URL = os.getenv(
