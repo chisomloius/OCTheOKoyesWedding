@@ -4,6 +4,7 @@ import logging
 import os
 from datetime import datetime
 
+
 from fastapi import FastAPI, HTTPException, Depends, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -34,16 +35,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
+frontend_url = os.getenv('FRONTEND_URL', 'https://octheokoyes.netlify.app').rstrip('/')
+
+print(f"🔧 CORS enabled for: {frontend_url}")  # Debug log
+
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        config.FRONTEND_URL.rstrip('/'),  # Remove trailing slash
+        frontend_url,
         "http://localhost:3000",  # For local testing
+        "https://octheokoyes.netlify.app"  # For production
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 # ===================================
