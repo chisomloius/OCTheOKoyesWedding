@@ -35,6 +35,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
+cors_origins = [
+    config.FRONTEND_URL.rstrip('/'),
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+print(f"✅ CORS Origins configured: {cors_origins}")
+
 frontend_url = os.getenv('FRONTEND_URL', 'https://octheokoyes.netlify.app').rstrip('/')
 
 print(f"🔧 CORS enabled for: {frontend_url}")  # Debug log
@@ -42,17 +49,14 @@ print(f"🔧 CORS enabled for: {frontend_url}")  # Debug log
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        frontend_url,
-        "http://localhost:3000",  # For local testing
-        "https://octheokoyes.netlify.app"  # For production
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Authorization"],
     expose_headers=["*"],
-    max_age=3600,
+    max_age=86400,
 )
+
 
 # ===================================
 # HEALTH CHECK ENDPOINTS

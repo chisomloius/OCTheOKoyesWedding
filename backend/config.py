@@ -12,8 +12,12 @@ class Config:
     API_RELOAD = os.getenv('API_RELOAD', 'True').lower() == 'true'
     
     # CORS
-    FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-    BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
+    # FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+    # BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
+    
+    # CORS - with proper defaults
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://octheokoyes.netlify.app')
+    BACKEND_URL = os.getenv('BACKEND_URL', 'https://octheokoyesweddingapi.onrender.com')
     
     # Environment
     # ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
