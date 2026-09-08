@@ -38,7 +38,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://octheokoyes.netlify.app",  # Your Netlify frontend
+        config.FRONTEND_URL.rstrip('/'),  # Remove trailing slash
         "http://localhost:3000",  # For local testing
     ],
     allow_credentials=True,
