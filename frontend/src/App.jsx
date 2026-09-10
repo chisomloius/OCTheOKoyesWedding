@@ -119,7 +119,7 @@ export default function App() {
       caption: "Goofy Moments" 
     },
     { url: "https://lh3.googleusercontent.com/d/1yDZGmqc9qg1roUTzD6QWKA-WbYYsTu9t", 
-      caption: "Standing Together" 
+      caption: "Standing Together at the Ambazonian Statue" 
     }
   ];
 
