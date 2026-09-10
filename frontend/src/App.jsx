@@ -123,56 +123,56 @@ export default function App() {
     }
   ];
 
-  const registryItems = [
-  { 
-    id: 1, 
-    name: "4-Burner Gas Cooker", 
-    category: "Gifts",
-    image: "/images/image-wed.jpg"
-  },
-  { 
-    id: 2, 
-    name: "Air Conditioner", 
-    category: "Gifts",
-    image: "/images/image-wed-2.jpg"
-  },
-  { 
-    id: 3, 
-    name: "Air Fryer", 
-    category: "Gifts",
-    image: "/images/image-wed-3.jpg"
-  },
-  { 
-    id: 4, 
-    name: "Cash Gift", 
-    category: "Gifts",
-    image: "/images/image-wed-4.jpg"
-  },
-  { 
-    id: 5, 
-    name: "Deep Freezer", 
-    category: "Gifts",
-    image: "/images/image-wed-5.jpg"
-  },
-  { 
-    id: 6, 
-    name: "Food Processor", 
-    category: "Gifts",
-    image: "/images/image-wed-6.jpg"
-  },
-  { 
-    id: 7, 
-    name: "Stainless Cookware", 
-    category: "Gifts",
-    image: "/images/image-wed-7.jpg"
-  },
-  { 
-    id: 8, 
-    name: "Washing Machine", 
-    category: "Gifts",
-    image: "/images/image-wed-8.jpg"
-  }
-];
+//   const registryItems = [
+//   { 
+//     id: 1, 
+//     name: "4-Burner Gas Cooker", 
+//     category: "Gifts",
+//     image: "/images/image-wed.jpg"
+//   },
+//   { 
+//     id: 2, 
+//     name: "Air Conditioner", 
+//     category: "Gifts",
+//     image: "/images/image-wed-2.jpg"
+//   },
+//   { 
+//     id: 3, 
+//     name: "Air Fryer", 
+//     category: "Gifts",
+//     image: "/images/image-wed-3.jpg"
+//   },
+//   { 
+//     id: 4, 
+//     name: "Cash Gift", 
+//     category: "Gifts",
+//     image: "/images/image-wed-4.jpg"
+//   },
+//   { 
+//     id: 5, 
+//     name: "Deep Freezer", 
+//     category: "Gifts",
+//     image: "/images/image-wed-5.jpg"
+//   },
+//   { 
+//     id: 6, 
+//     name: "Food Processor", 
+//     category: "Gifts",
+//     image: "/images/image-wed-6.jpg"
+//   },
+//   { 
+//     id: 7, 
+//     name: "Stainless Cookware", 
+//     category: "Gifts",
+//     image: "/images/image-wed-7.jpg"
+//   },
+//   { 
+//     id: 8, 
+//     name: "Washing Machine", 
+//     category: "Gifts",
+//     image: "/images/image-wed-8.jpg"
+//   }
+// ];
 
 
 
