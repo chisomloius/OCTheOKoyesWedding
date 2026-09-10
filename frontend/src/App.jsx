@@ -53,6 +53,14 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const slideshow = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % loveStoryImages.length);
+    }, 5000);
+
+    return () => clearInterval(slideshow);
+  }, []);
+
   const toggleAudio = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -258,9 +266,10 @@ export default function App() {
           </button>
           <div className="carousel-view">
             <img
+              key={loveStoryImages[currentSlide].url}
+              className="carousel-image"
               src={loveStoryImages[currentSlide].url}
               alt={loveStoryImages[currentSlide].caption}
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
             <p className="carousel-caption">{loveStoryImages[currentSlide].caption}</p>
           </div>
