@@ -443,7 +443,7 @@ export default function App() {
           </p>
           <div style={{ padding: "1rem", borderRadius: "14px", background: "rgba(255,255,255,.16)" }}>
             {/* <div><strong>Standard Chartered Bank</strong></div> */}
-            <img src="/images/standard-logo.png" alt="Standard Chartered Bank Logo" 
+            <img src="https://1000logos.net/wp-content/uploads/2021/11/Standard-Chartered-logo.png" alt="Standard Chartered Bank Logo" 
                style={{ width: "140px", margin: "0.5rem 0", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", 
                animation: "glowEffect 3s ease-in-out infinite alternate" }} /> 
                <div style={{ marginTop: ".35rem", letterSpacing: ".12em", fontSize: "2.0rem" }}><strong>0006192192</strong></div>
