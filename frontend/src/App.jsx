@@ -430,7 +430,7 @@ export default function App() {
           </p>
           <div style={{ padding: "1rem", borderRadius: "14px", background: "rgba(255,255,255,.16)" }}>
             <div><strong>Standard Chartered Bank</strong></div>
-            <img src="/images/standard-chartered-logo.png" alt="Standard Chartered Bank Logo" 
+            <img src="/images/standard-logo.png" alt="Standard Chartered Bank Logo" 
                style={{ width: "120px", margin: "0.5rem 0", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", 
                animation: "glowEffect 3s ease-in-out infinite alternate" }} /> 
             <div style={{ marginTop: ".35rem", letterSpacing: ".12em" }}>Account Number: <strong>000 6192 192</strong></div>
