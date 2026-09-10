@@ -430,23 +430,13 @@ export default function App() {
           </p>
           <div style={{ padding: "1rem", borderRadius: "14px", background: "rgba(255,255,255,.16)" }}>
             <div><strong>Standard Chartered Bank</strong></div>
-            <div style={{ marginTop: ".35rem" }}>Account Name: <strong>Chisom Okoye</strong></div>
+            <img src="/images/standard-chartered-logo.png" alt="Standard Chartered Bank Logo" 
+               style={{ width: "120px", margin: "0.5rem 0", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", 
+               animation: "glowEffect 3s ease-in-out infinite alternate" }} /> 
             <div style={{ marginTop: ".35rem", letterSpacing: ".12em" }}>Account Number: <strong>000 6192 192</strong></div>
           </div>
         </div>
-        <div className="registry-grid">
-          {registryItems.map((item) => (
-            <div key={item.id} className="registry-card">
-              <img src={item.image} alt={item.name} className="registry-item-image" />
-              <div className="registry-icon">{item.icon}</div>
-              <h3 className="registry-item-name">{item.name}</h3>
-              <p className="registry-category">{item.category}</p>
-              <button className="registry-btn" onClick={() => setSelectedGift(item)}>
-                        Contribute
-                      </button>
-            </div>
-          ))}
-        </div>
+        
       </section>
 
       {/* Sponsor Gift Modal */}
