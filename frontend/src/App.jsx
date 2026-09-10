@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import "./App.css";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "https://octheokoyesweddingapi.onrender.com";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://OCtheOkoyesweddingapi.onrender.com";
 
 
 export default function App() {
@@ -190,7 +190,7 @@ export default function App() {
       {/* Navbar */}
       <header className="navbar">
         <div className="nav-container">
-          <a href="#hero" className="nav-brand">#OCTheOkoyes</a>
+          <a href="#hero" className="nav-brand">#OCtheOkoyes</a>
           
           {/* Desktop Nav */}
           <nav className="nav-links desktop-nav">
@@ -240,7 +240,7 @@ export default function App() {
           <div className="hero-date">
             <span>31.10.26</span>
             <span className="dot">•</span>
-            <span>#OCTheOkoyes</span>
+            <span>#OCtheOkoyes</span>
           </div>
           <a href="#rsvp" className="hero-cta">RSVP Attendance</a>
         </div>
@@ -397,7 +397,7 @@ export default function App() {
       {/* Gift Registry */}
       <section id="registry" className="section">
         <h2 className="section-title">Our Gift Registry</h2>
-        <p className="section-subtitle">Help us build our home together</p>
+        <p className="section-subtitle">Your presence is our greatest gift</p>
         <div
           className="registry-greeting"
           style={{
@@ -414,26 +414,40 @@ export default function App() {
           }}
         >
           <svg width="96" height="70" viewBox="0 0 96 70" role="img" aria-label="Animated wedding rings" style={{ display: "block", margin: "0 auto 1rem" }}>
-            <circle cx="38" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5">
-              <animate attributeName="cy" values="35;31;35" dur="2.4s" repeatCount="indefinite" />
+            <defs>
+              <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="1.3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <circle cx="38" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5" filter="url(#ringGlow)">
+              <animate attributeName="cy" values="35;28;35;41;35" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="r" values="22;24;22;20;22" dur="4s" repeatCount="indefinite" />
             </circle>
-            <circle cx="58" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5">
-              <animate attributeName="cy" values="35;39;35" dur="2.4s" repeatCount="indefinite" />
+            <circle cx="58" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5" filter="url(#ringGlow)">
+              <animate attributeName="cy" values="35;42;35;29;35" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="r" values="22;20;22;24;22" dur="4s" repeatCount="indefinite" />
             </circle>
-            <path d="M48 9l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff">
-              <animate attributeName="opacity" values="1;.3;1" dur="1.8s" repeatCount="indefinite" />
+            <path d="M48 9l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff" filter="url(#ringGlow)">
+              <animate attributeName="opacity" values="1;0.3;1;0.7;1" dur="2.5s" repeatCount="indefinite" />
+              <animateTransform attributeName="transform" type="rotate" values="-12 48 35;12 48 35;-12 48 35" dur="3s" repeatCount="indefinite" />
             </path>
           </svg>
-          <h3 style={{ margin: "0 0 .75rem", fontSize: "1.45rem" }}>A Little Love Goes a Long Way</h3>
+          <h3 style={{ margin: "0 0 .75rem", fontSize: "1.45rem" }}>Your Little Love Goes a Long Way</h3>
           <p style={{ margin: "0 auto 1.25rem", maxWidth: "570px", lineHeight: 1.7 }}>
-            Your kindness and thoughtful support mean so much to us as we begin this beautiful new chapter together.
+           Your love and presence mean the world to us. Should you wish to honour us with a gift, 
+           please know how deeply grateful we are — your kindness will help shape a warm home as we begin this journey together.
           </p>
           <div style={{ padding: "1rem", borderRadius: "14px", background: "rgba(255,255,255,.16)" }}>
-            <div><strong>Standard Chartered Bank</strong></div>
+            {/* <div><strong>Standard Chartered Bank</strong></div> */}
             <img src="/images/standard-logo.png" alt="Standard Chartered Bank Logo" 
-               style={{ width: "120px", margin: "0.5rem 0", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", 
+               style={{ width: "140px", margin: "0.5rem 0", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", 
                animation: "glowEffect 3s ease-in-out infinite alternate" }} /> 
-            <div style={{ marginTop: ".35rem", letterSpacing: ".12em" }}>Account Number: <strong>000 6192 192</strong></div>
+               <div style={{ marginTop: ".35rem", letterSpacing: ".12em", fontSize: "2.0rem" }}><strong>0006192192</strong></div>
+            <div style={{ marginTop: ".35rem", letterSpacing: ".12em" }}><italic>Chisom Okoye</italic></div>
           </div>
         </div>
         
@@ -571,14 +585,14 @@ export default function App() {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-meta">
-            <span className="footer-hash">#OCTheOkoyes</span>
+            <span className="footer-hash">#OCtheOkoyes</span>
           </div>
           <div className="footer-credits">
             <span><strong>Developer: </strong><a href="https://linkedin.com/in/chisomokoye" target="_blank" rel="noreferrer" className="footer-couple">Chisom Okoye</a></span>
             <span><strong>Media: </strong><a href="https://instagram.com/beaconvibesocials" target="_blank" rel="noreferrer" className="footer-couple">BVS</a></span>
           </div>
           <div className="footer-code">
-            <a href="https://github.com/chisomloius/OCTheOKoyesWedding" target="_blank" rel="noreferrer"><Code2 size={16} />Source Code</a>
+            <a href="https://github.com/chisomloius/OCtheOkoyesWedding" target="_blank" rel="noreferrer"><Code2 size={16} />Source Code</a>
           </div>
         </div>
       </footer>
