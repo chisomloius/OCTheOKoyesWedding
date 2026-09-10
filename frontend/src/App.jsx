@@ -398,6 +398,42 @@ export default function App() {
       <section id="registry" className="section">
         <h2 className="section-title">Our Gift Registry</h2>
         <p className="section-subtitle">Help us build our home together</p>
+        <div
+          className="registry-greeting"
+          style={{
+            margin: "2rem auto 3rem",
+            maxWidth: "760px",
+            padding: "2rem",
+            textAlign: "center",
+            borderRadius: "24px",
+            color: "#fff",
+            background: "linear-gradient(135deg, #285943, #8FB9A8, #285943)",
+            backgroundSize: "200% 200%",
+            animation: "registryGlow 7s ease infinite",
+            boxShadow: "0 14px 35px rgba(40, 89, 67, 0.2)",
+          }}
+        >
+          <svg width="96" height="70" viewBox="0 0 96 70" role="img" aria-label="Animated wedding rings" style={{ display: "block", margin: "0 auto 1rem" }}>
+            <circle cx="38" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5">
+              <animate attributeName="cy" values="35;31;35" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="58" cy="35" r="22" fill="none" stroke="#F6F0E3" strokeWidth="5">
+              <animate attributeName="cy" values="35;39;35" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+            <path d="M48 9l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff">
+              <animate attributeName="opacity" values="1;.3;1" dur="1.8s" repeatCount="indefinite" />
+            </path>
+          </svg>
+          <h3 style={{ margin: "0 0 .75rem", fontSize: "1.45rem" }}>A Little Love Goes a Long Way</h3>
+          <p style={{ margin: "0 auto 1.25rem", maxWidth: "570px", lineHeight: 1.7 }}>
+            Your kindness and thoughtful support mean so much to us as we begin this beautiful new chapter together.
+          </p>
+          <div style={{ padding: "1rem", borderRadius: "14px", background: "rgba(255,255,255,.16)" }}>
+            <div><strong>Standard Chartered Bank</strong></div>
+            <div style={{ marginTop: ".35rem" }}>Account Name: <strong>Chisom Okoye</strong></div>
+            <div style={{ marginTop: ".35rem", letterSpacing: ".12em" }}>Account Number: <strong>000 6192 192</strong></div>
+          </div>
+        </div>
         <div className="registry-grid">
           {registryItems.map((item) => (
             <div key={item.id} className="registry-card">
