@@ -37,7 +37,7 @@ app = FastAPI(
 
 cors_origins = [
     config.FRONTEND_URL.rstrip('/'),
-    "http://localhost:3000",
+    "https://octheokoyes.netlify.app",
     "http://localhost:5173",
 ]
 print(f"✅ CORS Origins configured: {cors_origins}")
