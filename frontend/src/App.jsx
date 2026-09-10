@@ -29,7 +29,8 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedGift, setSelectedGift] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // Start each visitor on a different photo while keeping the carousel controls intact.
+  const [currentSlide, setCurrentSlide] = useState(() => Math.floor(Math.random() * 10));
   const [rsvpStatus, setRsvpStatus] = useState({ loading: false, msg: "", error: false });
   const [formData, setFormData] = useState({
     name: "",
@@ -256,7 +257,11 @@ export default function App() {
             <ChevronLeft size={22} />
           </button>
           <div className="carousel-view">
-            <img src={loveStoryImages[currentSlide].url} alt={loveStoryImages[currentSlide].caption} />
+            <img
+              src={loveStoryImages[currentSlide].url}
+              alt={loveStoryImages[currentSlide].caption}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
             <p className="carousel-caption">{loveStoryImages[currentSlide].caption}</p>
           </div>
           <button 
