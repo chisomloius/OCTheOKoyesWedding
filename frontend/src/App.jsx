@@ -351,7 +351,7 @@ export default function App() {
           <div className="info-card">
             <MapPin className="icon" size={28} />
             <h3>Wedding Reception</h3>
-            <p>The Loft Event Center; 4 Ezigbakagbaka, Woji </p>
+            <p>The Loft Event Center; 4 Ezigbakagbaka, Woji, Rivers State </p>
           </div>
         </div>
       </section>
