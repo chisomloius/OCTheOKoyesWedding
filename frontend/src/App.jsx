@@ -7,7 +7,6 @@ import {
   Calendar,
   Church,
   MapPin,
-  Camera,
   Upload,
   Copy,
   Check,
