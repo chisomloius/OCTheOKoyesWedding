@@ -47,6 +47,9 @@ export default function App() {
   useEffect(() => {
     const audio = audioRef.current;
     audio.loop = true;
+    audio.play()
+      .then(() => setIsPlaying(true))
+      .catch((err) => console.log("Autoplay blocked:", err));
 
     return () => {
       audio.pause();
@@ -58,8 +61,10 @@ export default function App() {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().catch((err) => console.log("Audio play error:", err));
-      setIsPlaying(true);
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => console.log("Audio play error:", err));
     }
   };
 
@@ -92,34 +97,34 @@ export default function App() {
   const loveStoryImages = [
     { 
       url: "https://lh3.googleusercontent.com/d/1nLWi9uOSdjxP8tWvaTaHVypcJCpBwpj7", 
-      caption: "Sunny Sunday Rendezvous"
+      caption: "Good company"
     },
     { url: "https://lh3.googleusercontent.com/d/1cdLY1aTu29EsSSuX6zOoz8E5PO43Fkvj", 
-      caption: "Nights Out" 
+      caption: "Beach Night Out" 
     },
     { url: "https://lh3.googleusercontent.com/d/15emwpryZmXmNuw8Xnf6NcWr1W8oYqFf5", 
       caption: "Celebrating Our Engagement" 
     },
     { url: "https://lh3.googleusercontent.com/d/1tMN-dgBgzkK5V5ysvK7p-I4b0zq9NbgZ", 
-      caption: "In the Middle of Sea" 
+      caption: "At Aqua Amazone" 
     },
     { url: "https://lh3.googleusercontent.com/d/1itv9GuMyRItc-PjR4laKD2s8fqS9pCWU", 
       caption: "Marriage Introduction" 
     },
     { url: "https://lh3.googleusercontent.com/d/1tV9B_WSQaYqJ-qHvdcWh6jlfHiSIevEp", 
-      caption: "Roadside Pictures" 
+      caption: "Us, As Always" 
     },
     { url: "https://lh3.googleusercontent.com/d/1yL8v90oS6w2GOeduzGNu2RM14UX0l_ti", 
       caption: "Wedding Guests" 
     },
     { url: "https://lh3.googleusercontent.com/d/1xrkmqjmhmB2sI6JKE65JRzSNtCELOPyo", 
-      caption: "On Board Trip Together" 
+      caption: "On First Trip Together" 
     },
     { url: "https://lh3.googleusercontent.com/d/1Ansxf15DTZ5LHCig-Aa31G4zv_O8jozm", 
-      caption: "Goofy Moments" 
+      caption: "Cute Moments" 
     },
     { url: "https://lh3.googleusercontent.com/d/1yDZGmqc9qg1roUTzD6QWKA-WbYYsTu9t", 
-      caption: "Standing Together at the Ambazonian Statue" 
+      caption: "At Monument Amazone" 
     }
   ];
 
@@ -566,12 +571,12 @@ export default function App() {
         <h2 className="section-title">Our Wedding Moments</h2>
         <p className="section-subtitle">Share and celebrate our special day together</p>
         <div className="gallery-grid">
-          <a href="https://drive.google.com/drive/folders/1ef73AWYZ85rRvnmpP6wbHwVIgh7uGfPv?usp=sharing" target="_blank" rel="noreferrer" className="gallery-card">
+          {/* <a href="https://drive.google.com/drive/folders/1ef73AWYZ85rRvnmpP6wbHwVIgh7uGfPv?usp=sharing" target="_blank" rel="noreferrer" className="gallery-card">
             <Camera className="gallery-icon" size={40} />
             <h3>View Wedding Photos</h3>
             <p>Browse all our beautiful moments</p>
             <span className="gallery-pill">View Gallery</span>
-          </a>
+          </a> */}
           <a href="https://drive.google.com/drive/folders/1E86IDsTnDJxvPExmoj825e4sNvZ9f8QD?usp=drive_link" target="_blank" rel="noreferrer" className="gallery-card">
             <Upload className="gallery-icon" size={40} />
             <h3>Share Your Photos</h3>
