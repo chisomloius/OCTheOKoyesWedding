@@ -24,7 +24,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "https://OCtheOkoyesweddin
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedGift, setSelectedGift] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -66,12 +66,15 @@ export default function App() {
         .catch((err) => console.log("Audio play error:", err));
     }
   };
+
+  // Function to copy account number to clipboard 
   const handleCopyAccount = (text) => {
     navigator.clipboard.writeText(text);
     setCopiedAccount(true);
     setTimeout(() => setCopiedAccount(false), 2500);
   };
-
+  
+  // Function to handle RSVP form submission 
   const handleRSVPSubmit = async (e) => {
     e.preventDefault();
     setRsvpStatus({ loading: true, msg: "", error: false });
@@ -92,6 +95,7 @@ export default function App() {
     }
   };
 
+  // Function to images for the love story carousel 
   const loveStoryImages = [
     { 
       url: "https://lh3.googleusercontent.com/d/1nLWi9uOSdjxP8tWvaTaHVypcJCpBwpj7", 
@@ -125,7 +129,7 @@ export default function App() {
       caption: "At Monument Amazone" 
     }
   ];
-
+   // function to handle gift selection and display modal 
 //   const registryItems = [
 //   { 
 //     id: 1, 
