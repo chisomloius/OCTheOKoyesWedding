@@ -24,7 +24,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "https://OCtheOkoyesweddin
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(new Audio("/audio/endlessLove.mp3"))
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedGift, setSelectedGift] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -41,18 +42,17 @@ export default function App() {
   });
 
   // Local audio file in public/audio/endlessLove.mp3
-  const audioRef = useRef(new Audio("/audio/endlessLove.mp3"));
-
   useEffect(() => {
     const audio = audioRef.current;
     audio.loop = true;
-    audio.play()
-      .then(() => setIsPlaying(true))
-      .catch((err) => console.log("Autoplay blocked:", err));
 
-    return () => {
-      audio.pause();
+    const playAudio = () => {
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      document.removeEventListener("click", playAudio);
     };
+
+    document.addEventListener("click", playAudio);
+    return () => document.removeEventListener("click", playAudio);
   }, []);
 
   const toggleAudio = () => {
@@ -60,10 +60,7 @@ export default function App() {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((err) => console.log("Audio play error:", err));
+      audioRef.current.play().then(() => setIsPlaying(true));
     }
   };
 
