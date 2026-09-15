@@ -39,18 +39,54 @@ export default function App() {
     guests: "1",
     message: "",
   });
+  // Local audio file in public/audio/endlessLove.mp3 
   const audioRef = useRef(null);
 
-  const toggleAudio = () => {
-    if (isPlaying) {
-      audioRef.current?.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current?.play();
-      setIsPlaying(true);
+  useEffect(() => {
+    // Create audio element only once
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/audio/endlessLove.mp3");
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.3; // Set lower volume
     }
-  };
+  }, []);
 
+    // Auto-play on first user interaction
+    useEffect(() => {
+      const handleUserInteraction = () => {
+        if (audioRef.current && !isPlaying) {
+          audioRef.current
+            .play()
+            .then(() => setIsPlaying(true))
+            .catch((err) => console.log("Autoplay blocked:", err));
+        }
+        // Remove listener after first interaction
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("keydown", handleUserInteraction);
+      };
+
+      document.addEventListener("click", handleUserInteraction);
+      document.addEventListener("keydown", handleUserInteraction);
+
+      return () => {
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("keydown", handleUserInteraction);
+      };
+    }, [isPlaying]);
+
+    const toggleAudio = () => {
+      if (!audioRef.current) return;
+
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current
+          .play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => console.log("Audio play error:", err));
+      }
+    };
   const handleCopyAccount = (text) => {
     navigator.clipboard.writeText(text);
     setCopiedAccount(true);
