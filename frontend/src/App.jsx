@@ -117,10 +117,10 @@ export default function App() {
       caption: "Wedding Guests" 
     },
     { url: "https://lh3.googleusercontent.com/d/1xrkmqjmhmB2sI6JKE65JRzSNtCELOPyo", 
-      caption: "On First Trip Together" 
+      caption: "Our First Trip Together" 
     },
     { url: "https://lh3.googleusercontent.com/d/1Ansxf15DTZ5LHCig-Aa31G4zv_O8jozm", 
-      caption: "Cute Moments" 
+      caption: "Cute Moment" 
     },
     { url: "https://lh3.googleusercontent.com/d/1yDZGmqc9qg1roUTzD6QWKA-WbYYsTu9t", 
       caption: "At Monument Amazone" 
@@ -351,7 +351,7 @@ export default function App() {
           <div className="info-card">
             <MapPin className="icon" size={28} />
             <h3>Wedding Reception</h3>
-            <p>The Loft Event; 4 Ezigbakagbaka, Woji </p>
+            <p>The Loft Event Center; 4 Ezigbakagbaka, Woji </p>
           </div>
         </div>
       </section>
