@@ -39,31 +39,15 @@ export default function App() {
     guests: "1",
     message: "",
   });
-
-  // Local audio file in public/audio/endlessLove.mp3
-  const audioRef = useRef(new Audio("/audio/endlessLove.mp3"));
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    audio.loop = true;
-    audio.play()
-      .then(() => setIsPlaying(true))
-      .catch((err) => console.log("Autoplay blocked:", err));
-
-    return () => {
-      audio.pause();
-    };
-  }, []);
+  const audioRef = useRef(null);
 
   const toggleAudio = () => {
     if (isPlaying) {
-      audioRef.current.pause();
+      audioRef.current?.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((err) => console.log("Audio play error:", err));
+      audioRef.current?.play();
+      setIsPlaying(true);
     }
   };
 
@@ -576,7 +560,7 @@ export default function App() {
             <p>Browse all our beautiful moments</p>
             <span className="gallery-pill">View Gallery</span>
           </a> */}
-          <a href="https://drive.google.com/drive/folders/1E86IDsTnDJxvPExmoj825e4sNvZ9f8QD?usp=drive_link" target="_blank" rel="noreferrer" className="gallery-card">
+          <a href="https://drive.google.com/drive/folders/1E86IDsTnDJxvPExmoj825e4sNvZ9f8QD?usp=drive_link" target="_blank" rel="noreferrer" className="gallery-card" style={{ gridColumn: "1 / -1" }}>
             <Upload className="gallery-icon" size={40} />
             <h3>Share Your Photos</h3>
             <p>Upload your favorite moments from the wedding</p>
