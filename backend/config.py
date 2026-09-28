@@ -27,7 +27,9 @@ class Config:
     # Database
     DATABASE_URL = os.getenv(
         'DATABASE_URL',
-        'postgresql://rsvpoctheokoyedb_user:tXWouKUSlSWyHflrEGdfZUmKa8hfH7Uo@dpg-daa9qfajnfac73fumrcg-a.oregon-postgres.render.com/rsvpoctheokoyedb'
+        # 'postgresql://rsvpoctheokoyedb_user:tXWouKUSlSWyHflrEGdfZUmKa8hfH7Uo@dpg-daa9qfajnfac73fumrcg-a.oregon-postgres.render.com/rsvpoctheokoyedb'
+        'postgresql://rsvpoctheokoyedb_user:u02V6l0nzgzuy7QPdxpXgx7RPEgB39KV@dpg-datdmnl9fdbs73bbl5sg-a.oregon-postgres.render.com/rsvpoctheokoyedb2'
+
     )
 
 config = Config()
