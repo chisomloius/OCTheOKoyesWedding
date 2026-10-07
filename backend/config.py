@@ -75,7 +75,7 @@ class Config:
     DATABASE_URL: str = os.getenv('DATABASE_URL') or ""
 
     if not DATABASE_URL:
-        raise ValueError("❌ DATABASE_URL environment variable is not set!")
+        raise ValueError("DATABASE_URL environment variable is not set!")
 
 config = Config()
 
